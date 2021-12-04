@@ -15,7 +15,7 @@ f.readline();
 allBoards = []
 allMarks  = []
 
-line=f.readline().strip()
+line=f.readline()
 while(len(line)):
     board=np.empty([5,5],'int32')
     for i in range(5):
@@ -36,7 +36,7 @@ for roll in diceRoll:
     if done:
         break
 
-    # for each board, check roll see if it's won
+    # for each board, check roll see if its won
     for i in range(len(allBoards)):
         marks = np.where(allBoards[i]==roll)
         allMarks[i][marks]=1
