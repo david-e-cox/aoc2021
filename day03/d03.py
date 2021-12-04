@@ -31,7 +31,6 @@ def bitFilter(data,doLeastCommon):
     return(value)
 
 
-
 # Read input file
 #f=open('example.txt');
 f=open('input.txt');
@@ -49,7 +48,7 @@ for i in range(0,nRows):
         string=lines[i].strip()
         data[i,j]=int(string[j])
 
-# sum along columns, normalize the round to determine  majority
+# sum along columns, normalize and round to determine majority
 gammaVec = np.int32(np.round(np.sum(data,axis=0)/nRows))
 gammaStr = ''.join(list(map(lambda x: str(x),gammaVec)))
 gammaRate = int(gammaStr,2)
