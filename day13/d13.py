@@ -1,9 +1,11 @@
 #!/usr/bin/python3
 import numpy as np
 
+# Display folder paper
 def printMap(paper):
     nX,nY=paper.shape;
     for j in range(nY):
+        print("   ",end='')
         for i in range(nX):
             if paper[i,j]:
                 print('#',end='')
@@ -12,30 +14,23 @@ def printMap(paper):
         print('')
 
 # Folding with numpy fliplr and flipud
-# stacking zeros in here to handle folds not in the middle of the paper
 def foldHoriz(paper,atY):
     nX,nY=paper.shape
-    if atY >= np.floor(nY/2):
-        newPaper = paper[:, :atY] + np.hstack( ( np.zeros([nX, nY-2*atY-1],'int32') ,np.fliplr(paper[:,atY+1:]) ) )
-    else:
-        newPaper = np.hstack( (np.zeros([nX,nY-2*atY-1],'int32'), paper[:, :atY]) ) + np.fliplr(paper[:,atY+1:])
+    newPaper = paper[:, :atY] + np.fliplr(paper[:,atY+1:])
     return(newPaper)
 
 def foldVert(paper,atX):
     nX,nY=paper.shape
-    if atX >= np.floor(nX/2):
-        newPaper = paper[:atX,:] + np.vstack( ( np.zeros([nX-2*atX-1,nY],'int32') ,np.flipud(paper[atX+1:,:])))
-    else:
-        newPaper = np.vstack( (np.zeros([nX-2*atX-1,nY],'int32'), paper[:atX,:]) ) + np.flipud(paper[atX+1:,:])
+    newPaper = paper[:atX,:] + np.flipud(paper[atX+1:,:])
     return(newPaper)
+
 
 # Read input file
 #f=open('example.txt');
 f=open('input.txt');
 
-# These dimensons are critical
-# I stumbled onto them....  not sure how we are supposed to determine the initial paper size
-paper = np.zeros([1311,895],'int32')
+# Oversized paper
+paper = np.zeros([1500,1000],'int32')
 
 line=f.readline().strip()
 while(len(line)>1):
@@ -43,6 +38,7 @@ while(len(line)>1):
     paper[ij[0],ij[1]]=1
     line=f.readline().strip()
 
+# Now read folding instructions    
 line=f.readline().strip()
 instruct=[]
 while(line):
@@ -50,6 +46,13 @@ while(line):
     instruct.append( (tmp[0][-1],int(tmp[1])) )
     line=f.readline().strip()
 
+# Cut paper down to size
+# Note: not fully general, assumes x,y or y,x initial fold sequence
+if instruct[0][0]=='x':
+    paper=paper[:instruct[0][1]*2+1,:instruct[1][1]*2+1]
+else:
+    paper=paper[:instruct[1][1]*2+1,:instruct[0][1]*2+1]
+    
 cnt=0
 for (direc,loc) in instruct:
     if direc=='y':
